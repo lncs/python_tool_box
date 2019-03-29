@@ -11,5 +11,5 @@
 ——modify_suffix.py
     批量修改suffix_files文件夹中文件的后缀名
 ——sftp_test.py
-    使用sftp登录服务器上传下载内容
+    使用sftp登录服务器上传下载内容到downloads文件夹中
 ```
