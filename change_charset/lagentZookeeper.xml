@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<monitor>
+	<monitorType describe="监视器类型" view_controlType="hidden">socketZookeeper</monitorType>
+	<monitorName describe="监视器名字" view_controlType="textInput" view_modifyable="true" view_validate="notNull,maxChar_100" view_copyenabled="false"></monitorName>
+	<displayType describe="扩展监视器类型" view_cfg_type="base" view_controlType="hidden">zookeeper</displayType>
+	<displayTypeName describe="扩展监视器类型名" view_cfg_type="base" view_controlType="text">Zookeeper</displayTypeName>
+	<agent describe="代理名称" view_cfg_type="base" view_controlType="hidden" view_dataEnum="none:无" view_modifyable="true">none</agent>
+	<pollingTime describe="轮询时间(s)" view_cfg_type="base"	view_controlType="textInput" view_modifyable="true" view_validate="notNull,pollingTime">30	</pollingTime>
+	<active describe="监视器是否运行" view_cfg_type="base" 	view_controlType="select" view_dataEnum="true:是,false:否" view_modifyable="false">true</active>
+	<host describe="主机地址" view_cfg_type="base" view_controlType="hidden" view_modifyable="true" view_validate="notNull,ip" view_copyenabled="false">127.0.0.1</host>
+	<hostName describe="集群IP和端口" view_cfg_type="base" 	view_controlType="textInput" view_modifyable="true" view_validate="notNull"	view_copyenabled="false"></hostName>
+	<netMask describe="子网掩码" view_cfg_type="base" view_controlType="hidden" view_copyenabled="false" view_modifyable="true" view_validate="ip">0.0.0.0</netMask>
+	<persistentBlocks describe="数据采集" view_cfg_type="base" view_controlType="adaptingSelect" view_modifyable="true" view_validate="notNull" view_copyenabled="true">all:10</persistentBlocks>
+	<explain isTemplateData="true"><![CDATA[
+	<b>监控目的：</b>
+    监视zookeeper集群的运行状况。
+	
+<b>监控前提：</b>
+    <b>1.</b>zookeeper服务器和监控平台可以直接网络连通。
+    <b>2.</b>集群IP和端口用冒号(:)分割，多个zookeeper node节点之间用分号(;)分割。
+<b>监视数据：</b>
+    包括身份、状态、id、事务号、接入IP等信息。
+    ]]></explain>
+	<msgField>
+
+		<block name="zookeeperStatus" describe="节点数据" tags="id">
+			<field name="IP" type="string" describe="waiting数(keepalived)" />
+			<field name="mode" type="string" describe="身份" />
+			<field name="status" type="string" describe="状态" />
+			<field name="id" type="string" describe="myid" />
+			<field name="trans" type="string" describe="事务号" />
+			<field name="client" type="string" describe="接入IP" />
+		</block>
+		<block name="zookeeperExceptionIp" describe="节点数据">
+			<field name="EIP" type="string" describe="异常IP" />
+			<field name="clusterError" type="string" describe="集群异常" />
+			<field name="leaders" type="integer" describe="集群中身份为leader的节点个数"/>
+		</block>
+	</msgField>
+	<warningConditions>
+		<warningCondition warn="lagent_function_error.threshold"
+			block="agentError" field="errorInfo" desfield="errorInfo" type="fixed"
+			warnControler="0:1" warnTimesForMerge="2" />
+		<warningCondition type="private" warn="NotAvailable">
+			<threshold name="节点不可用">
+				<level>2</level>
+				<expression>{zookeeperStatus:status}==false</expression>
+				<description>ZK节点({zookeeperExceptionIp:EIP})不可用</description>
+				<warnTimesForMerge>2</warnTimesForMerge>
+	        	<warnControler>2:2</warnControler>
+			</threshold>
+		</warningCondition>
+		<warningCondition type="private" warn="NotAvailable">
+			<threshold name="集群异常">
+				<level>1</level>
+				<expression>{zookeeperExceptionIp:clusterError}==false</expression>
+				<description>集群不可用，ZK节点({zookeeperExceptionIp:EIP})存在问题</description>
+				<warnTimesForMerge>2</warnTimesForMerge>
+	        	<warnControler>2:2</warnControler>
+			</threshold>
+		</warningCondition>
+		
+		<warningCondition type="private" warn="NotAvailable">
+			<threshold name="集群存在多个leader节点阈值">
+				<level>1</level>
+				<expression>{zookeeperExceptionIp:leaders}>1</expression>
+				<description>集群存在异常，存在多个leader。</description>
+				<warnTimesForMerge>2</warnTimesForMerge>
+	        	<warnControler>2:2</warnControler>
+			</threshold>
+		</warningCondition>
+		
+	</warningConditions>
+	<actions>
+		<warnControler>0:1</warnControler>
+		<warnTimesForMerge>2</warnTimesForMerge>
+	</actions>
+</monitor>

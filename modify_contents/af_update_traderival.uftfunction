@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<business:Function xmlns:business="http://www.hundsun.com/ares/studio/uft/business/1.0.0" chineseName="AF_日间更新_交易对手表更新" objectId="3710297">
+  <inputParameters id="jc_supdate_traderival" paramType="COMPONENT" type="jc_supdate_traderival"/>
+  <code>[获取组件][jc_supdate_traderival][][]&#xD;
+&#xD;
+&lt;M>[获取记录][jc_ctraderival(jc_pk_traderival)][&#xD;
+		rival_id = @jc_supdate_traderival.rival_id]&#xD;
+	&#xD;
+[继续执行]&#xD;
+&#xD;
+[记录为空][jc_ctraderival]&#xD;
+{&#xD;
+	[事务处理开始] &#xD;
+	[插入记录][jc_ctraderival][&#xD;
+		rival_id = @jc_supdate_traderival.rival_id,&#xD;
+		rival_type = @jc_supdate_traderival.rival_type,&#xD;
+		rival_outer_appraise = @jc_supdate_traderival.rival_outer_appraise,&#xD;
+		rival_inside_appraise = @jc_supdate_traderival.rival_inside_appraise,&#xD;
+		bankhead_id = @jc_supdate_traderival.bankhead_id,&#xD;
+		rival_inner_flag = @jc_supdate_traderival.rival_inner_flag]&#xD;
+	[事务处理结束]  &#xD;
+}&#xD;
+else&#xD;
+{&#xD;
+	[事务处理开始] &#xD;
+	[修改记录][jc_ctraderival][&#xD;
+		rival_type = @jc_supdate_traderival.rival_type,&#xD;
+		rival_outer_appraise = @jc_supdate_traderival.rival_outer_appraise,&#xD;
+		rival_inside_appraise = @jc_supdate_traderival.rival_inside_appraise,&#xD;
+		rival_inner_flag = @jc_supdate_traderival.rival_inner_flag]&#xD;
+	[事务处理结束]  &#xD;
+}</code>
+</business:Function>
