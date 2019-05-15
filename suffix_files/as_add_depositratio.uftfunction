@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<business:Function xmlns:business="http://www.hundsun.com/ares/studio/uft/business/1.0.0" chineseName="AS_基础公共_期货保证金比例预加载" objectId="2710014">
+  <code>&#xD;
+[AF_基础公共_期货保证金比例预加载]&#xD;
+</code>
+</business:Function>
